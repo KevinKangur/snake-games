@@ -1,6 +1,6 @@
 const gameBoardTable = document.getElementById('gameboard');
 const foodArray = ['&#127815', '&#127816', '&#127817', '&#127818', '&#127819', '&#127820', '&#127821', '&#127822', '&#127823', '&#127824', '&#127825', '&#127826', '&#127827', '&#129389', '&#129373', '&#129381', '&#127813'];
-const messageDiv = document.getElementById(message);
+const messageDiv = document.getElementById('message');
 const boardSize = 20
 
 let gameBoard = [...Array(boardSize).keys()].map(() => [...Array(boardSize).keys()].map(() => 0));
@@ -10,6 +10,10 @@ const snakeX = parseInt(boardSize / 2);
 
 gameBoard[snakeY][snakeX] = 's';
 let snake = [snakeY + '_' + snakeX];
+
+let score = 0
+const scoreDiv = document.getElementById('score');
+
 
 let direction = 'u';
 
@@ -36,13 +40,19 @@ document.addEventListener ('keydown', e => {
 
 addFood();
 
+updateHighScore();
+
 // game engine
 function playGame () {
 
     let [cursorY, cursorX] = calculateNewCursor();
     
-    if ( ifHitsBorder(cursorY, cursorX) ) {
-        return 0;
+    if ( hitsBorder(cursorY, cursorX) ) {
+        gameOver();
+    }
+
+    if ( hitsSnake(cursorY, cursorX) ) {
+        gameOver();
     }
    
     snake.unshift(cursorY + '_' + cursorX);
@@ -73,9 +83,7 @@ function drawGameBoard () {
         gameBoardTable.append(boardRowTr);
     });
 
-    const snakeHeadId = document.getElementById(snake[0]);
-    snakeHeadId = innerHTML = '&#128053'
-
+    scoreDiv.innerText = 'Score: ' + score;
 }
 
 
@@ -101,6 +109,7 @@ function calculateNewCursor () {
 
     if ( y == foodY && x == foodX ) {
         addFood();
+        score++;
         snake.push(undefined);
     }
 
@@ -108,16 +117,38 @@ function calculateNewCursor () {
 }
 
 // test if snake hits the border
-function ifHitsBorder ( y, x ) {
+function hitsBorder ( y, x ) {
 
     if ( y < 0 || y >= boardSize || x < 0 || x >= boardSize ) {
-        clearInterval(intervalID);
-        intervalID = null;
-        messageDiv.innerText = 'Game Over!'
         return true;
     }
 
     return false;
+}
+
+//test if snake hits itself
+function hitsSnake ( y, x ) {
+
+    if ( snake.includes(y + '_' + x) ) {
+        return true;
+    }
+
+    return false;
+}
+
+//game over stuff
+function gameOver () {
+    
+    clearInterval(intervalID);
+    intervalID = null
+    
+    messageDiv.innerText = 'Game Over!'
+    messageDiv.classList.remove('hidden');
+
+    if ( localStorage.getItem('Top score') < score ) {
+        localStorage.setItem('Top score', score)
+
+    }
 }
 
 // gerenate food with random
@@ -135,4 +166,11 @@ function addFood () {
     // const foodTd = document.getElementById(y + '_' + x);
     // console.log(y + '_' + x, foodTd);
     // foodTd.classList.add('food');
+}
+
+// update high score
+function updateHighScore () {
+    const highScoreDiv = document.getElementById('high-score');
+    const highScore = localStorage.getItem('Top score');
+    highScoreDiv.innerText = 'Top score: ' + highScore;  
 }

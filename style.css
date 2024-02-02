@@ -11,10 +11,6 @@
     font-size: 10px;
 }
 
-.snake {
-    background-color: blue;
-}
-
 #message {
     height: 38px;
     margin-top: 64px;
@@ -26,3 +22,31 @@
     background-color: white;
     padding: 4px 8px;
 }
+
+#score {
+    text-align: center;
+    font-size: 3rem;
+    margin-top: 10rem;
+}
+
+#high-score {
+    text-align: center;
+    font-size: 20px;
+}
+
+.snake {
+    background-color: green;
+}
+
+.hidden {
+    display: none;
+    visibility: hidden;
+}
+
+.centered {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
